@@ -2,6 +2,8 @@
 
 import ProductCard from "@/component/ProductCard"
 import { useEffect, useState } from "react"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart, faHeart } from '@fortawesome/free-solid-svg-icons';
 
 export default function Home() {
 
@@ -20,12 +22,13 @@ export default function Home() {
   
 
   return (
-    <main>
-      <h1 className="text-3xl font-bold mb-4">Product Catalog</h1>
-      <div className="grid grid-cols-4">
+    <section>
+      <h1 className="text-3xl font-bold mb-4 p-4">Product Catalog</h1>
+      <div className="grid grid-cols-4 p-4">
         {products.map((product) => (
-        <ProductCard key={product.id} product={product}/>))}
+        <ProductCard key={product.id} product={product}/>
+        ))}
       </div>
-    </main>
+    </section>
   )
 }
