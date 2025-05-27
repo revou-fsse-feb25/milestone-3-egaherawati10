@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from 'react-toastify';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -11,12 +12,19 @@ export default function LoginPage() {
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        // Simulating login check
-        if (email === 'user@example.com' && password === 'Password123') {
-            document.cookie = `auth_token=sampletoken; path=/;`;
-            router.push('/dashboard');
-        } else {
-            alert('Invalid credentials');
+        try {
+            const success = email === 'user@example.com' && password === 'Password123';
+            if (success) {
+                toast.success('Login successful');
+                // Set the cookie
+                document.cookie = `auth_token=sampletoken; path=/;`;
+                router.push('/dashboard');
+                
+            } else {
+                throw new Error('Invalid credentials');
+            }
+        } catch (error) {
+            toast.error(error.message || 'Login failed');
         }
     };
 
