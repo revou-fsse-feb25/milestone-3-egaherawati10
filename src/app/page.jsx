@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import ShopFAQ from "@/component/FAQ";
 import dynamic from "next/dynamic";
+import { useCartStore } from "@/app/stores/cartStore";
 
 const HeavyComponent = dynamic(() => import("@/component/HeavyComponent"), {
   loading: () => <p>Loading...</p>,
