@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 const handler = NextAuth({
     providers: [CredentialsProvider({
@@ -8,7 +9,7 @@ const handler = NextAuth({
             password: { label: "Password", type: "password" },
         },
         async authorize(credentials) {
-            const res = await fetch("https://api.escuelajs.co/api/v1/auth/login"), {
+            const res = await fetch("https://api.escuelajs.co/api/v1/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -24,15 +25,27 @@ const handler = NextAuth({
                     return { ...user, email: credentials.email };
                 }
                 return null;
-            };
-            }
-        },
-    }),
-    session: "",
+            },
+       }),
+    ],
+    session: {
+        strategy: "jwt",        
+    },
     callbacks: {
-        session: ({ session }) => {
+        async jwt({ token, user }) {
+            if (user) {
+                token.accessToken = user.access_token;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            session.accessToken = token.accessToken;
             return session;
         },
     },
-    pages: "",
-})
+    pages: {
+        signIn: "/login",
+    },
+});
+
+export { handler as GET, handler as POST };
