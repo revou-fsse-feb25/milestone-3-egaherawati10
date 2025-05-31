@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import FAQ from '../app/component/FAQ'; 
+import ShopFAQ from '../app/component/FAQ'; 
 
 describe('ShopFAQ', () => {
 
@@ -21,21 +21,21 @@ describe('ShopFAQ', () => {
     ];
 
     it('should render the FAQ component', () => {
-        render(<FAQ />);
+        render(<ShopFAQ />);
         allQuestions.forEach((question, index) => {
             expect(screen.getByText('Frequently Asked Questions')).toBeInTheDocument();
         });   
     });
 
 it('show the answers when the question is clicked', () => {
-    render(<FAQ />);
+    render(<ShopFAQ />);
     const question = screen.getByText('How long does shipping take?');
     fireEvent.click(question);
     expect(screen.getByText('Standard shipping usually takes 3-5 days. Express options are available at checkout.')).toBeInTheDocument();
 });
 
 it('hides the answers when the question is clicked again', () => {
-    render(<FAQ />);
+    render(<ShopFAQ />);
     const question = screen.getByText('How long does shipping take?');
     fireEvent.click(question);
     expect(screen.getByText('Standard shipping usually takes 3-5 days. Express options are available at checkout.')).toBeInTheDocument();
@@ -44,7 +44,7 @@ it('hides the answers when the question is clicked again', () => {
 });
 
 it('only shows one answer at a time', () => {
-    render(<FAQ />);
+    render(<ShopFAQ />);
     const firstQuestion = screen.getByText(allQuestions[0]);
     const secondQuestion = screen.getByText(allQuestions[1]);
 

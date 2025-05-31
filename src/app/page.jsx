@@ -41,8 +41,7 @@ export default function Home() {
     const fetchProducts = async function () {
       try {
       // fetching data
-      const res = await fetch('https://fakestoreapi.com/products')
-      // store the data
+      const res = await fetch('https://api.escuelajs.co/api/v1/products?offset=0&limit=20');
       const data = await res.json();
       setProducts(data)
       console.log("data", data);
