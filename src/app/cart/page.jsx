@@ -1,12 +1,12 @@
 "use client"
 
 import React from "react";
-import { useCartStore } from "../stores/cartStore";
+import { useCartStorage } from "../stores/CartStorage";
 
 const CartPage = () => {
     const {
         cartItems, incrementQuantity, decrementQuantity, removeItem,
-    } = useCartStore();
+    } = useCartStorage();
 
     const total = cartItems.reduce(
         (sum, item) => sum + item.price * item.quantity, 0

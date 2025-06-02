@@ -1,14 +1,14 @@
 "use client"
 
-import ProductCard from "@/component/ProductCard"
-import { use, useEffect, useState } from "react"
+import ProductCard from "@/app/component/ProductCard"
+import { useEffect, useState } from "react"
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
-import ShopFAQ from "@/component/FAQ";
+import ShopFAQ from "@/app/component/FAQ";
 import dynamic from "next/dynamic";
-import { useCartStore } from "@/app/stores/cartStore";
+import CartIcon from "@/app/component/CartIcon";
 
-const HeavyComponent = dynamic(() => import("@/component/HeavyComponent"), {
+const HeavyComponent = dynamic(() => import("@/app/component/HeavyComponent"), {
   loading: () => <p>Loading...</p>,
   ssr: false,
 });
@@ -44,7 +44,7 @@ export default function Home() {
       const res = await fetch('https://api.escuelajs.co/api/v1/products?offset=0&limit=20');
       const data = await res.json();
       setProducts(data)
-      console.log("data", data);
+      // console.log("data", data);
       if (!responseCookiesToRequestCookies.ok) {
         throw new Error("Failed to load data")
       }
@@ -76,6 +76,7 @@ export default function Home() {
         <NavLink href="/" isActive={pathname === "/"}>Home</NavLink>
         <NavLink href="/" isActive={pathname === "/products"}>Products</NavLink>
         <NavLink href="/" isActive={pathname === "/contact"}>Contact Us</NavLink>
+        <NavLink href="/cart" isActive={pathname === "/cart"}><CartIcon /></NavLink>
         <NavLink href="/login" isActive={pathname === "/login"}>Log In</NavLink>
         <NavLink href="/register" isActive={pathname === "/register"}>Sign Up</NavLink>
       </div>
