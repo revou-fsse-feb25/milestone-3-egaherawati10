@@ -12,10 +12,10 @@ export default function ProductCard({product}) {
             <p>Price: ${product.price}</p>
             <div className="flex place-content-end gap-2">
                   <div className="w-8 h-8 bg-red-300 rounded-full flex justify-center items-center cursor-pointer hover:bg-red-500">
-                    <FontAwesomeIcon icon={faShoppingCart} />
+                    <FontAwesomeIcon icon={faShoppingCart} data-testid="icon" />
                   </div>
                   <div className="w-8 h-8 bg-red-300 rounded-full flex justify-center items-center cursor-pointer hover:bg-red-500">
-                    <FontAwesomeIcon icon={faHeart} />
+                    <FontAwesomeIcon icon={faHeart} data-testid="icon" />
                   </div>
                 </div>
         </div>
