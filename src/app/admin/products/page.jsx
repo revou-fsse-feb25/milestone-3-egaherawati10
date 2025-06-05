@@ -1,25 +1,53 @@
+// 1. Create server component
+async function ProductList() {
+    const res = await fetch("https://api.escuelajs.co/api/v1/products");
+    const products = await res.json();
+
+    return (
+        <ul>
+            {products.slice(0, 10).map((product) => (
+                <li key={product.id}>
+                    <div>
+                        <h2>{product.title}</h2>
+                        <p>Price: ${product.price}</p>
+                        <p>{product.description}</p>
+                    </div>
+                </li>
+            ))}
+        </ul>
+    );
+}
+
+// 2. Create client side component
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 export default function AdminProductPage() {
     const [products, setProducts] = useState([]);
-    const [form, setForm] = useState({ title: "", price: "", description: ""});
+    const [form, setForm] = useState({ title: "", price: "", description: "" });
     const [editingProductId, setEditingProductId] = useState(null);
+    const [rerender, setRerender] = useState(false);
+
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
 
     useEffect(() => {
-        fetchProducts();
-    }, []);
+        if (mounted) {
+            fetchProducts();
+        }
+    }, [mounted, rerender]);
 
     const fetchProducts = async () => {
-            const res = await axios.get("https://api.escuelajs.co/api/v1/products");
-            setProducts(res.data.slice(0, 10));
+        const res = await axios.get("https://api.escuelajs.co/api/v1/products");
+        setProducts(res.data.slice(0, 10));
     };
 
     const handleChange = (e) => {
         setForm({
-            ...form, [e.target.name]: e.target.value });
+            ...form, [e.target.name]: e.target.value
+        });
     };
 
     const handleSubmit = async (e) => {
@@ -39,9 +67,10 @@ export default function AdminProductPage() {
             await axios.post("https://api.escuelajs.co/api/v1/products", payload);
         }
 
-        setForm({ title: "", price: "", description: ""});
+        setForm({ title: "", price: "", description: "" });
         setEditingProductId(null);
-        fetchProducts();
+        setRerender(!rerender);
+        // fetchProducts();
     };
 
     const handleEdit = (product) => {
@@ -55,7 +84,8 @@ export default function AdminProductPage() {
 
     const handleDelete = async (productId) => {
         await axios.delete(`https://api.escuelajs.co/api/v1/products/${productId}`);
-        fetchProducts();
+        setRerender(!rerender);
+        // fetchProducts();
     };
 
     return (
@@ -86,26 +116,15 @@ export default function AdminProductPage() {
                     required
                 />
                 <button
-                type="submit">
+                    type="submit">
                     {editingProductId ? "Update" : "Create"} Product
                 </button>
             </form>
 
-            <ul>
-                {products.map((product) => (
-                    <li key={product.id}>
-                        <div>
-                            <h2>{product.title}</h2>
-                            <p>Price: ${product.price}</p>
-                            <p>{product.description}</p>
-                        </div>
-                        <div>
-                            <button onClick={() => handleEdit(product)}>Edit</button>
-                            <button onClick={() => handleDelete(product.id)}>Delete</button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+            <ProductList />
         </div>
     );
 }
+
+//3. Add revalidate variable
+export const revalidate = 60;

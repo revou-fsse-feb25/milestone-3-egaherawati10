@@ -1,23 +1,31 @@
-// components/Header.js
-import React from 'react';
+"use client";
 
-export default function Header({ isLoggedIn, user }) {
+import { signOut, useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export default function UserProfile() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
+
+  if (status === "loading") return <p>Loading...</p>;
+
   return (
-    <header className="p-4 bg-gray-800 flex items-center justify-between">
-      {isLoggedIn ? (
-        <div className="profile flex items-center">
-          <img
-            src={user.avatarUrl}
-            alt={`${user.name}'s avatar`}
-            className="rounded-full w-10 h-10"
-          />
-          <span className="ml-2 text-white">{user.name}</span>
-        </div>
-      ) : (
-        <button className="btn-login text-white bg-blue-600 px-4 py-2 rounded">
-          Login
-        </button>
-      )}
-    </header>
+    <main className="p-8">
+      <h1 className="text-3xl font-bold mb-4">User Profile</h1>
+      <p>Welcome, {session?.user?.name}!</p>
+      <button
+        onClick={() => signOut({ callbackUrl: "/login" })}
+        className="mt-4 px-4 py-2 bg-red-600 text-white rounded"
+      >
+        Sign Out
+      </button>
+    </main>
   );
 }
