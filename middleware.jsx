@@ -5,19 +5,33 @@ export async function middleware(request) {
     const { pathname } = request.nextUrl;
 
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-    
     const isAuthenticated = !!token;
+    const userRole = token?.role;
 
-    console.log(`[Middleware] ${pathname} - Authenticated: ${isAuthenticated}`);
+    console.log(`[Middleware] ${pathname} - Auth: ${isAuthenticated}, Role: ${userRole}`);
 
-    // Redirect to login page if user is not authenticated
+    // Redirect authenticated users away from login
     if (pathname === '/login' && isAuthenticated) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
-    // Redirect unauth users away from dashboard
+    // Protect dashboard route
     if (pathname.startsWith('/dashboard') && !isAuthenticated) {
         return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    // Admin-only routes
+    if (pathname.startsWith('/dashboard/admin')) {
+        if (!isAuthenticated || userRole !== 'admin') {
+            return NextResponse.redirect(new URL('/unauthorized', request.url));
+        }
+    }
+
+    // User-only routes
+    if (pathname.startsWith('/dashboard/user')) {
+        if (!isAuthenticated || userRole !== 'user') {
+            return NextResponse.redirect(new URL('/unauthorized', request.url));
+        }
     }
 
     return NextResponse.next();

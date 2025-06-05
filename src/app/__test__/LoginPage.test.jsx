@@ -1,9 +1,10 @@
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import LoginPage from '../login/page';
+import LoginPage from '@/login/page';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 //  mock next-auth login
 jest.mock('next-auth/react', () => ({

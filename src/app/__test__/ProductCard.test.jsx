@@ -1,6 +1,7 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ProductCard from '../component/ProductCard';
+import ProductCard from '@/component/ProductCard';
 import { faShoppingCart, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { useRouter } from 'next/router';
