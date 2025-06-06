@@ -22,13 +22,11 @@ export default function ProductCard({ product }) {
       <p className="text-lg font-semibold">Price: ${product.price}</p>
       <div className="flex justify-end gap-2">
         <button
+          aria-label={`Add ${product.title} to cart`}
           onClick={() => addToCart(product)}
           className="w-8 h-8 bg-red-300 rounded-full flex justify-center items-center hover:bg-red-500 transition-colors"
         >
-          <FaShoppingCart className="text-white" />
-        </button>
-        <button className="w-8 h-8 bg-red-300 rounded-full flex justify-center items-center hover:bg-red-500 transition-colors">
-          <FaHeart className="text-white" />
+        <FaShoppingCart className="text-white" />
         </button>
       </div>
     </div>

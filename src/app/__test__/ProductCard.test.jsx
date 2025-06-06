@@ -1,53 +1,80 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import ProductCard from '@/component/ProductCard';
-import { faShoppingCart, faHeart } from '@fortawesome/free-solid-svg-icons';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { useRouter } from 'next/router';
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import ProductCard from "../component/ProductCard";
 
-// Adding custom icons
-library.add(faShoppingCart, faHeart);
-
-// Mock next/link to render children
-jest.mock('next/link', () => {
-    return ({ children, href }) => <a href={href}>{children}</a>;
+// Mock next/link to simply render children (avoid Next.js Link complexity)
+jest.mock("next/link", () => {
+  return ({ children }) => children;
 });
 
-// Mock router
-jest.mock('next/router', () => ({
-    userRouter: jest.fn()
+// Mock react-icons/fa (optional, but keeps tests clean)
+jest.mock("react-icons/fa", () => {
+  return {
+    FaShoppingCart: () => <svg data-testid="shopping-cart-icon" />,
+    FaHeart: () => <svg data-testid="heart-icon" />,
+  };
+});
+
+// Mock your Zustand store hook
+jest.mock("../stores/CartStorage", () => ({
+  useCartStorage: jest.fn(),
 }));
 
-describe('ProductCard', () => {
-    const mockProduct = {
-        id: 1,
-        title: 'Product 1',
-        description: 'Description 1',
-        price: 10,
-        image: 'https://via.placeholder.com/150'
-    };
+import { useCartStorage } from "../stores/CartStorage";
 
-    it('should render the product title', () => {
-        render(<ProductCard product={mockProduct} />);
+describe("ProductCard", () => {
+  const product = {
+    id: 123,
+    title: "Test Product",
+    description: "This is a test product description.",
+    price: 99.99,
+    images: ["https://example.com/image.jpg"],
+  };
 
-        // check image
-        const img = screen.getByRole('img');
-        expect(img).toHaveAttribute('src', mockProduct.image);
+  const addToCartMock = jest.fn();
 
-        // check title
-        expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
-
-        // check description
-        expect(screen.getByText(mockProduct.description)).toBeInTheDocument();
-
-        // check price
-        expect(screen.getByText(`Price: ${mockProduct.price}`)).toBeInTheDocument();
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useCartStorage.mockReturnValue({
+      addToCart: addToCartMock,
     });
+  });
 
-    it('displays shopping cart and heart icons', () => {
-        render(<ProductCard product={mockProduct} />);
-        const icons = screen.getAllByTestId('icon');
-        expect(icons.length).toBe(2);
-    });
+  test("renders product details correctly", () => {
+    render(<ProductCard product={product} />);
+
+    // Image with correct src and alt
+    const img = screen.getByRole("img", { name: product.title });
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute("src", product.images[0]);
+
+    // Title
+    expect(screen.getByText(product.title)).toBeInTheDocument();
+
+    // Description
+    expect(screen.getByText(product.description)).toBeInTheDocument();
+
+    // Price
+    expect(screen.getByText(`Price: $${product.price}`)).toBeInTheDocument();
+
+    // Shopping cart and heart icons present
+    expect(screen.getByTestId("shopping-cart-icon")).toBeInTheDocument();
+    expect(screen.getByTestId("heart-icon")).toBeInTheDocument();
+  });
+
+  test("uses placeholder image when no images are provided", () => {
+    const productWithoutImages = { ...product, images: [] };
+    render(<ProductCard product={productWithoutImages} />);
+
+    const img = screen.getByRole("img", { name: product.title });
+    expect(img).toHaveAttribute("src", "/placeholder.jpg");
+  });
+
+  test("calls addToCart when shopping cart button is clicked", () => {
+    render(<ProductCard product={product} />);
+
+    const addToCartButton = screen.getByRole("button", { name: /add test product to cart/i });
+        fireEvent.click(addToCartButton);
+        expect(addToCartMock).toHaveBeenCalledWith(product);
+  });
 });

@@ -143,6 +143,7 @@ export default function AdminProductPage() {
             className="border p-4 mb-4 rounded flex justify-between items-center"
           >
             <div>
+              <img src="{product.images[]}" alt="{product.title}" className="w-16 h-16"/>
               <h2 className="font-bold">{product.title}</h2>
               <p>Price: ${product.price}</p>
               <p>{product.description}</p>

@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useCartStorage } from "../stores/CartStorage";
+import { useCartStorage } from "@/app/stores/CartStorage";
 import LoadingSpinner from "@/app/component/LoadingSpinner"; // Import the LoadingSpinner component
+import Link from "next/link";
 
 const CartPage = () => {
   const {
@@ -89,12 +90,11 @@ const CartPage = () => {
           </div>
 
           <div className="text-right">
-            <button
+            <Link href={"/checkout"}
               className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-              onClick={() => alert("Checkout not implemented yet")}
             >
               Checkout
-            </button>
+            </Link>
           </div>
         </>
       )}

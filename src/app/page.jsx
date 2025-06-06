@@ -5,27 +5,20 @@ import ProductCard from "@/app/component/ProductCard";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ShopFAQ from "@/app/component/FAQ";
-// import dynamic from "next/dynamic";
 import CartIcon from "@/app/component/CartIcon";
-import LoadingSpinner from "./component/LoadingSpinner";
-
-// const HeavyComponent = dynamic(() => import("@/app/component/HeavyComponent"), {
-//   loading: () => <p>Loading...</p>,
-//   ssr: false,
-// });
+import LoadingSpinner from "@/app/component/LoadingSpinner";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [show, setShow] = useState(false);
 
   const pathname = usePathname();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("https://api.escuelajs.co/api/v1/products?offset=0&limit=20");
+        const res = await fetch("https://api.escuelajs.co/api/v1/products");
         if (!res.ok) throw new Error("Failed to load data");
         const data = await res.json();
         setProducts(data);
@@ -65,8 +58,8 @@ export default function Home() {
           </Link>
           <div className="flex gap-4">
             <NavLink href="/">Home</NavLink>
-            <NavLink href="/products">Products</NavLink>
-            <NavLink href="/contact">Contact Us</NavLink>
+            <NavLink href="/">FAQ</NavLink>
+            <NavLink href="/">Contact Us</NavLink>
             <NavLink href="/cart"><CartIcon /></NavLink>
             <NavLink href="/login">Log In</NavLink>
             <NavLink href="/register">Sign Up</NavLink>
@@ -78,7 +71,6 @@ export default function Home() {
         <h1 className="text-2xl font-bold mb-4">
           Product Catalog
         </h1>
-        
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
