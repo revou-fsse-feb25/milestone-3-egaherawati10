@@ -3,7 +3,7 @@ import Link from "next/link";
 export default async function ProductPage({ params }) {
   const id = params.id;
 
-  const res = await fetch(`https://api.escuelajs.co/api/v1/products/${id}`);
+  const res = await fetch(`https://api.escuelajs.co/api/v1/products/${id}`, { next: { revalidate: 60 } });
   const product = await res.json();
 
   return (

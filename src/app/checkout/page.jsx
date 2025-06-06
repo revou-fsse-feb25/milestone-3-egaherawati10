@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCartStorage } from "@/app/stores/cartStorage";
+import { useCartStorage } from "../stores/cartStorage";
+import { useSession } from 'next-auth/react';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { cartItems, clearCart } = useCartStorage();
   const [loading, setLoading] = useState(false);
+  const { data: session, status } = useSession()
   const [form, setForm] = useState({ paymentMethod: "card" });
 
   const total = cartItems.reduce(
@@ -27,7 +29,8 @@ export default function CheckoutPage() {
     setTimeout(() => {
       clearCart();
       setLoading(false);
-      router.push("/confirmation");
+      alert('Thank you for shopping!');
+      router.push("/");
     }, 1000);
   };
 

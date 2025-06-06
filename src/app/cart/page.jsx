@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useCartStorage } from "@/app/stores/CartStorage";
-import LoadingSpinner from "@/app/component/LoadingSpinner"; // Import the LoadingSpinner component
+import { useCartStorage } from "../stores/CartStorage";
+import LoadingSpinner from "../component/LoadingSpinner"; // Import the LoadingSpinner component
 import Link from "next/link";
 
 const CartPage = () => {

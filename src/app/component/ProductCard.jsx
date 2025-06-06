@@ -2,8 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { FaShoppingCart, FaHeart } from "react-icons/fa";
-import { useCartStorage } from "@/app/stores/CartStorage";
+import { FaShoppingCart } from "react-icons/fa";
+import { useCartStorage } from "../stores/CartStorage";
 
 export default function ProductCard({ product }) {
   const addToCart = useCartStorage((state) => state.addToCart);
@@ -22,11 +22,10 @@ export default function ProductCard({ product }) {
       <p className="text-lg font-semibold">Price: ${product.price}</p>
       <div className="flex justify-end gap-2">
         <button
-          aria-label={`Add ${product.title} to cart`}
           onClick={() => addToCart(product)}
           className="w-8 h-8 bg-red-300 rounded-full flex justify-center items-center hover:bg-red-500 transition-colors"
         >
-        <FaShoppingCart className="text-white" />
+        <FaShoppingCart data-testid="cart-icon" className="text-white" />
         </button>
       </div>
     </div>

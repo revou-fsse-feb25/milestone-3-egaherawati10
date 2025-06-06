@@ -9,10 +9,16 @@ export default function UserProfile() {
   const router = useRouter();
 
   useEffect(() => {
+    if (status === "loading") return;
+
     if (status === "unauthenticated") {
       router.push("/login");
     }
-  }, [status, router]);
+
+    if (session?.user?.role === "admin") {
+      router.replace("/dashboard"); // 👈 Redirect admins away
+    }
+  }, [status, session, router]);
 
   if (status === "loading") return <p>Loading...</p>;
 

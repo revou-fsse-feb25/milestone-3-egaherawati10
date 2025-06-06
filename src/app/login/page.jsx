@@ -1,20 +1,32 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const { data: session, status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [mounted, setMounted] = useState(false); // Track mount state
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // 🔐 Redirect authenticated users away from login page
+  useEffect(() => {
+    if (status === "authenticated") {
+      if (session?.user?.role === "admin") {
+        router.replace("/dashboard");
+      } else {
+        router.replace("/profile");
+      }
+    }
+  }, [status, session, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +42,6 @@ export default function LoginPage() {
     setLoading(false);
 
     if (res.ok) {
-      // Redirect based on role
       const sessionRes = await fetch("/api/auth/session");
       const session = await sessionRes.json();
 
@@ -44,16 +55,15 @@ export default function LoginPage() {
     }
   };
 
-  // Don't render form until mounted on client to avoid hydration mismatch
-  if (!mounted) {
-    return null; // or a spinner/loading placeholder
+  if (!mounted || status === "loading") {
+    return null; // or a loading spinner
   }
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-900">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded shadow-md w-full max-w-md"
+        className="bg-gray-800 p-8 rounded shadow-md w-full max-w-md"
       >
         <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
         <input
@@ -80,7 +90,9 @@ export default function LoginPage() {
           {loading ? "Logging in..." : "Login"}
         </button>
         {error && <p className="text-red-500 mt-2">{error}</p>}
+        <p className="text-white text-center mt-2">Already have an account? <a href="/register" className="text-blue-500 underline font-bold">Sign Up</a></p>
       </form>
+      
     </main>
   );
 }
