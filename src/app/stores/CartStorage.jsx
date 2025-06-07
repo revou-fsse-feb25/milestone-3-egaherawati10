@@ -27,7 +27,7 @@ export const useCartStorage = create(
             };
         },
 
-    incrementQuantity: (id) => {
+        incrementQuantity: (id) => {
         set({
             cartItems: get().cartItems.map((item) =>
             item.id === id

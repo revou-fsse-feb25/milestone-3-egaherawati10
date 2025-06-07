@@ -59,7 +59,6 @@ export default function HomeClient({ session }) {
           <div className="flex gap-4 items-center">
             <NavLink href="/">Home</NavLink>
             <NavLink href="/">FAQ</NavLink>
-            <NavLink href="/">Contact Us</NavLink>
             <NavLink href="/cart"><CartIcon /></NavLink>
             <NavLink href={session.user.role === "admin" ? "/dashboard" : "/profile"}>
               {session.user.name?.split(" ")[0] || "Profile"}

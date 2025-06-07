@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useCartStorage } from "../stores/CartStorage";
-import LoadingSpinner from "../component/LoadingSpinner"; // Import the LoadingSpinner component
+import LoadingSpinner from "../component/LoadingSpinner";
 import Link from "next/link";
 
 const CartPage = () => {
