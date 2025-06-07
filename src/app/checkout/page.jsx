@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCartStorage } from "../stores/cartStorage";
+import { useCartStorage } from "../stores/CartStorage";
 import { useSession } from 'next-auth/react';
 
 export default function CheckoutPage() {

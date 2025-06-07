@@ -1,11 +1,11 @@
 import React from "react";
 import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 import CheckoutPage from "../../checkout/page";
-import { useCartStorage } from "../../stores/cartStorage";
+import { useCartStorage } from "../../stores/CartStorage";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-jest.mock("../../stores/cartStorage");
+jest.mock("../../stores/CartStorage");
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
 }));
