@@ -1,11 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useCartStorage } from "../stores/CartStorage";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Link from "next/link";
 
 const CartPage = () => {
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const {
     cartItems,
     incrementQuantity,
@@ -13,18 +17,30 @@ const CartPage = () => {
     removeItem,
   } = useCartStorage();
 
-  const [loading, setLoading] = useState(true); // Add a loading state
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (status === "loading") return;
+    if (status === "unauthenticated") {
+      router.push("/login");
+    } else {
+      setTimeout(() => {
+        setLoading;
+      }, 500);
+    }
+  }, [status, router]);
+
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  useEffect(() => {
-    // Simulate loading time (replace with actual loading logic)
-    setTimeout(() => {
-      setLoading(false); // Set loading to false when cart items are loaded
-    }, 500); // Adjust time to match actual loading duration
-  }, [cartItems]);
+  // useEffect(() => {
+  //   // Simulate loading time (replace with actual loading logic)
+  //   setTimeout(() => {
+  //     setLoading(false); // Set loading to false when cart items are loaded
+  //   }, 500); // Adjust time to match actual loading duration
+  // }, [cartItems]);
 
   return (
     <div className="max-w-4xl mx-auto p-6">

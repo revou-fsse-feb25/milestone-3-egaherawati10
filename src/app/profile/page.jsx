@@ -16,7 +16,7 @@ export default function UserProfile() {
     }
 
     if (session?.user?.role === "admin") {
-      router.replace("/dashboard"); // 👈 Redirect admins away
+      router.push("/dashboard"); // 👈 Redirect admins away
     }
   }, [status, session, router]);
 

@@ -17,13 +17,12 @@ export default function LoginPage() {
     setMounted(true);
   }, []);
 
-  // 🔐 Redirect authenticated users away from login page
   useEffect(() => {
     if (status === "authenticated") {
       if (session?.user?.role === "admin") {
-        router.replace("/dashboard");
+        router.push("/dashboard");
       } else {
-        router.replace("/profile");
+        router.push("/profile");
       }
     }
   }, [status, session, router]);

@@ -4,6 +4,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { NavBar } from "../component/NavBar";
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
@@ -23,6 +24,9 @@ export default function AdminDashboard() {
 
   return (
     <main className="p-8">
+      <NavBar session={session} />
+    
+    <section>
       <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
       <p>Welcome, {session?.user?.name}!</p>
       <button
@@ -37,6 +41,7 @@ export default function AdminDashboard() {
       >
         Manage Products
       </Link>
+    </section>
     </main>
   );
 }
