@@ -4,8 +4,9 @@ export default async function AdminProductPage() {
   let products = [];
 
   try {
-    const res = await fetch("https://api.escuelajs.co/api/v1/products", { next: { revalidate: 60 }}
-    );
+    const res = await fetch("https://api.escuelajs.co/api/v1/products", {
+      next: { revalidate: 60 },
+    });
     const data = await res.json();
     products = data.slice(0, 10);
   } catch (error) {
