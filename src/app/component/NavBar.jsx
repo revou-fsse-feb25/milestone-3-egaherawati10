@@ -37,7 +37,6 @@ export function NavBar({ session }) {
 
           {isAdmin ? (
             <>
-              <NavLink href={"/dashboard"}>Dashboard</NavLink>
               <NavLink href={"/dashboard/products"}>Products</NavLink>
             </>
           ) : (

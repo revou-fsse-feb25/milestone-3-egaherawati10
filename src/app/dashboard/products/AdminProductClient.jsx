@@ -19,7 +19,6 @@ export default function AdminProductClient({ initialProducts }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // ❗ Use effect to switch to fresh CSR fetch after mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -30,10 +29,13 @@ export default function AdminProductClient({ initialProducts }) {
         setError("Failed to fetch products.");
       }
     };
-    fetchProducts(); // client-side data refresh
+    fetchProducts();
   }, []);
 
   if (status === "loading") return <LoadingSpinner />;
+  if (!session) return <div className="p-8 text-center">Please log in to manage products.</div>;
+
+  const token = session.accessToken;
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,6 +43,7 @@ export default function AdminProductClient({ initialProducts }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
     const payload = {
       title: form.title,
@@ -52,20 +55,46 @@ export default function AdminProductClient({ initialProducts }) {
         : ["https://placeimg.com/640/480/any"],
     };
 
+    if (isNaN(payload.price) || payload.price <= 0) {
+      setError("Price must be a positive number.");
+      setLoading(false);
+      return;
+    }
+
+    if (!token) {
+      setError("Not authenticated.");
+      setLoading(false);
+      return;
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
     try {
       if (editingProductId) {
         await axios.put(
           `https://api.escuelajs.co/api/v1/products/${editingProductId}`,
-          payload
+          payload,
+          config
         );
         setEditingProductId(null);
       } else {
-        await axios.post("https://api.escuelajs.co/api/v1/products", payload);
+        await axios.post(
+          "https://api.escuelajs.co/api/v1/products",
+          payload,
+          config
+        );
       }
+
       setForm({ title: "", price: "", description: "", imageUrl: "" });
+
       const res = await axios.get("https://api.escuelajs.co/api/v1/products");
       setProducts(res.data.slice(0, 10));
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError("Failed to save product.");
     }
     setLoading(false);
@@ -83,11 +112,27 @@ export default function AdminProductClient({ initialProducts }) {
 
   const handleDelete = async (id) => {
     setLoading(true);
+    setError("");
+
+    if (!token) {
+      setError("Not authenticated.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      await axios.delete(`https://api.escuelajs.co/api/v1/products/${id}`);
+      await axios.delete(
+        `https://api.escuelajs.co/api/v1/products/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const res = await axios.get("https://api.escuelajs.co/api/v1/products");
       setProducts(res.data.slice(0, 10));
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError("Failed to delete product.");
     }
     setLoading(false);
@@ -157,7 +202,7 @@ export default function AdminProductClient({ initialProducts }) {
                   <img
                     src={product.images?.[0]}
                     alt={product.title}
-                    className="w-16 h-16 object-cover"
+                    className="w-16 h-16 object-cover mb-2"
                   />
                   <h2 className="font-bold">{product.title}</h2>
                   <p>Price: ${product.price}</p>

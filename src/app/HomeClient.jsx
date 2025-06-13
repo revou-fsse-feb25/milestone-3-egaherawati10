@@ -1,13 +1,14 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import ProductCard from "./component/ProductCard";
 import ShopFAQ from "./component/FAQ";
 import LoadingSpinner from "./component/LoadingSpinner";
 import { useEffect, useState } from "react";
 import { NavBar } from "./component/NavBar";
 
-export default function HomeClient({ session }) {
+export default function HomeClient() {
+  const { data: session, status } = useSession();
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,7 +30,7 @@ export default function HomeClient({ session }) {
     fetchProducts();
   }, []);
 
-  if (loading) return <div className="p-4 text-lg"><LoadingSpinner /></div>;
+  if (status === "loading" || loading) return <div className="p-4 text-lg"><LoadingSpinner /></div>;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
 
   return (
@@ -40,8 +41,12 @@ export default function HomeClient({ session }) {
         <h1 className="text-2xl font-bold mb-4">Product Catalog</h1>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          <ProductCard
+            key={product.id}
+            product={product}
+            isAdmin={session?.user?.role === "admin"}
+          />
+        ))}
         </div>
       </div>
 
