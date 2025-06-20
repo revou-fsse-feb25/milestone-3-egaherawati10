@@ -1,24 +1,27 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStorage } from "../stores/CartStorage";
 import { useSession } from 'next-auth/react';
+import { CartItem } from "../../types/cart";
 
-export default function CheckoutPage() {
+type PaymentMethod = "card" | "transfer" | "cod" | "wallet";
+
+export default function CheckoutPage(): React.ReactElement {
   const router = useRouter();
   const { cartItems, clearCart } = useCartStorage();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { data: session, status } = useSession()
   const [form, setForm] = useState({ paymentMethod: "card" });
 
   const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum: number, item: CartItem) => sum + item.price * item.quantity,
     0
   );
 
-  const handleChange = (e) => {
-    setForm({ ...form, paymentMethod: e.target.value });
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, paymentMethod: e.target.value as PaymentMethod });
   };
 
   const handlePlaceOrder = () => {
@@ -46,7 +49,7 @@ export default function CheckoutPage() {
           <div>
             {cartItems.map((item) => (
               <div key={item.id} className="mb-2 border-b pb-2">
-                <p>{item.name}</p>
+                <p>{item.title}</p>
                 <p>
                   {item.quantity} x ${item.price.toFixed(2)}
                 </p>

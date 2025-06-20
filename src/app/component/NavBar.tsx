@@ -4,12 +4,23 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import CartIcon from "./CartIcon";
+import { Session } from "next-auth";
+import React, { ReactNode } from "react"
 
-export function NavBar({ session }) {
+interface NavBarProps {
+  session: Session | null;
+}
+
+interface NavLinkProps {
+  href: string;
+  children: ReactNode;
+}
+
+export function NavBar({ session }: NavBarProps) {
   const pathname = usePathname();
   const isAdmin = session?.user?.role === "admin";
 
-  function NavLink({ href, children }) {
+  function NavLink({ href, children }: NavLinkProps) {
     const isActive = pathname === href;
     return (
       <Link

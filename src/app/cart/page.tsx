@@ -6,27 +6,44 @@ import { useSession } from "next-auth/react";
 import { useCartStorage } from "../stores/CartStorage";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Link from "next/link";
+import { clear } from "console";
 
-const CartPage = () => {
+interface CartItem {
+  id: number;
+  title: string;
+  price: number;
+  quantity: number;
+  images: string[];
+}
+
+const CartPage: React.FC = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
+
   const {
     cartItems,
     incrementQuantity,
     decrementQuantity,
     removeItem,
+  } : {
+    cartItems: CartItem[];
+    incrementQuantity: (id: number) => void;
+    decrementQuantity: (id: number) => void;
+    removeItem: (id: number) => void;
   } = useCartStorage();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (status === "loading") return;
     if (status === "unauthenticated") {
       router.push("/login");
     } else {
-      setTimeout(() => {
-        setLoading;
+      setLoading(true);
+      const timer = setTimeout(() => {
+        setLoading(false);
       }, 500);
+      return () => clearTimeout(timer);
     }
   }, [status, router]);
 
@@ -34,13 +51,6 @@ const CartPage = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-
-  // useEffect(() => {
-  //   // Simulate loading time (replace with actual loading logic)
-  //   setTimeout(() => {
-  //     setLoading(false); // Set loading to false when cart items are loaded
-  //   }, 500); // Adjust time to match actual loading duration
-  // }, [cartItems]);
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -61,7 +71,7 @@ const CartPage = () => {
                 className="flex items-center gap-4 border rounded-lg p-4 shadow-sm"
               >
                 <img
-                  src={item.images}
+                  src={item.images[0]}
                   alt={item.title}
                   className="w-24 h-24 object-cover rounded"
                 />

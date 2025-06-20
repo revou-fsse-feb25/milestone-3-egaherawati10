@@ -4,8 +4,13 @@ import React from "react";
 import Link from "next/link";
 import { FaShoppingCart } from "react-icons/fa";
 import { useCartStorage } from "../stores/CartStorage";
+import { Product } from "../../types/product";
 
-export default function ProductCard({ product, isAdmin }) {
+interface ProductCardProps {
+  product: Product;
+  isAdmin?: boolean;
+}
+export default function ProductCard({ product, isAdmin = false }: ProductCardProps): React.ReactElement {
   const addToCart = useCartStorage((state) => state.addToCart);
 
   return (

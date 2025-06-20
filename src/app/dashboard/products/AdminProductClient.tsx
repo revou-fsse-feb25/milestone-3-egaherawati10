@@ -1,28 +1,49 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { NavBar } from "../../component/NavBar";
 import LoadingSpinner from "../../component/LoadingSpinner";
+import { Session } from "next-auth";
+import { Product } from "../../../types/product";
 
-export default function AdminProductClient({ initialProducts }) {
+
+// interface Product {
+//   id: number;
+//   name: string;
+//   price: number;
+//   description: string;
+//   images: string[];
+// }
+
+interface ProductForm {
+  title: string;
+  price: string;
+  description: string;
+  imageUrl: string;
+}
+
+interface AdminProductClientProps {
+  initialProducts?: Product[];
+}
+export default function AdminProductClient({ initialProducts }: AdminProductClientProps) {
   const { data: session, status } = useSession();
-  const [products, setProducts] = useState(initialProducts || []);
-  const [form, setForm] = useState({
+  const [products, setProducts] = useState<Product[]>(initialProducts || []);
+  const [form, setForm] = useState<ProductForm>({
     title: "",
     price: "",
     description: "",
     imageUrl: "",
   });
-  const [editingProductId, setEditingProductId] = useState(null);
+  const [editingProductId, setEditingProductId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("https://api.escuelajs.co/api/v1/products");
+        const res = await axios.get<Product[]>("https://api.escuelajs.co/api/v1/products");
         setProducts(res.data.slice(0, 10));
         setError("");
       } catch {
@@ -32,15 +53,15 @@ export default function AdminProductClient({ initialProducts }) {
     fetchProducts();
   }, []);
 
-  if (status === "loading") return <LoadingSpinner />;
+  if (status === "loading") return <LoadingSpinner message="Loading..." size="lg" fullScreen/>;
   if (!session) return <div className="p-8 text-center">Please log in to manage products.</div>;
 
-  const token = session.accessToken;
+  const token = (session as Session & { accessToken?: string })?.accessToken;
 
-  const handleChange = (e) =>
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -91,7 +112,7 @@ export default function AdminProductClient({ initialProducts }) {
 
       setForm({ title: "", price: "", description: "", imageUrl: "" });
 
-      const res = await axios.get("https://api.escuelajs.co/api/v1/products");
+      const res = await axios.get<Product[]>("https://api.escuelajs.co/api/v1/products");
       setProducts(res.data.slice(0, 10));
     } catch (err) {
       console.error(err);
@@ -100,17 +121,17 @@ export default function AdminProductClient({ initialProducts }) {
     setLoading(false);
   };
 
-  const handleEdit = (product) => {
+  const handleEdit = (product: Product) => {
     setForm({
       title: product.title,
-      price: product.price,
+      price: product.price.toString(),
       description: product.description,
       imageUrl: product.images?.[0] || "",
     });
     setEditingProductId(product.id);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: number) => {
     setLoading(true);
     setError("");
 
@@ -129,7 +150,7 @@ export default function AdminProductClient({ initialProducts }) {
           },
         }
       );
-      const res = await axios.get("https://api.escuelajs.co/api/v1/products");
+      const res = await axios.get<Product[]>("https://api.escuelajs.co/api/v1/products");
       setProducts(res.data.slice(0, 10));
     } catch (err) {
       console.error(err);

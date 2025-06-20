@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { JSX, useState } from 'react';
 import React from 'react';
 
-const faqs = [
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
+const faqs: FAQ[] = [
   {
     question: "How long does shipping take?",
     answer:
@@ -29,10 +34,10 @@ const faqs = [
   },
 ];
 
-export default function ShopFAQ() {
-  const [openIndex, setOpenIndex] = useState(null);
+export default function ShopFAQ(): JSX.Element {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (index) => {
+  const toggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 

@@ -4,10 +4,11 @@ import React from 'react';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'; // <-- Correct import!
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCartStorage } from "../stores/CartStorage";
+import { CartItem } from "../../types/cart";
 
-export default function CartIcon() {
-  const cartItems = useCartStorage((state) => state.cartItems || []);
-  const total = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+export default function CartIcon():React.ReactElement {
+  const cartItems: CartItem[] = useCartStorage((state) => state.cartItems || []);
+  const total: number = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <div className="relative inline-block">

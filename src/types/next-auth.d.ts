@@ -1,5 +1,3 @@
-// import NextAuth, { DefaultSession } from "next-auth";
-// import { JWT } from "next-auth/jwt";
 import { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
@@ -7,10 +5,11 @@ declare module "next-auth" {
         accessToken?: string
         user: {
         id?: number | string;
+        name?: string;
         email?: string;
         password?: string;
-        avatar?: string;
-        role?: string; // tambahkan role di sini
+        image?: string;
+        role?: string;
         } & DefaultSession["user"];
     };
     interface User {

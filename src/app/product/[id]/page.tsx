@@ -2,8 +2,16 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]/route";
 import { NavBar } from "../../component/NavBar";
+import { GetServerSidePropsContext } from "next";
+import { Product } from "../../../types/product";
 
-export default async function ProductPage({ params }) {
+interface ProductPageProps {
+  params: {
+    id: string;
+  }
+}
+
+export default async function ProductPage({ params }: ProductPageProps) {
   const id = params.id;
 
   const session = await getServerSession(authOptions);
@@ -11,7 +19,7 @@ export default async function ProductPage({ params }) {
   const res = await fetch(`https://api.escuelajs.co/api/v1/products/${id}`, {
     next: { revalidate: 60 },
   });
-  const product = await res.json();
+  const product: Product = await res.json();
 
   return (
     <main>

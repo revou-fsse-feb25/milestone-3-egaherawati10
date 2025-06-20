@@ -1,15 +1,28 @@
 "use client";
 
-import React from "react";
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { Product } from "../../types/product";
 
-export const useCartStorage = create(
-    persist(
+interface CartItem extends Product {
+    quantity: number;
+}
+
+interface CartState {
+    cartItems: CartItem[];
+    addToCart: (product: Product) => void;
+    incrementQuantity: (id: number) => void;
+    decrementQuantity: (id: number) => void;
+    removeItem: (id: number) => void;
+    clearCart: () => void; 
+}
+
+export const useCartStorage = create<CartState>()(
+    persist<CartState>(
         (set, get) => ({
         cartItems: [],
 
-    addToCart: (product) => {
+    addToCart: (product: Product) => {
         const exists = get().cartItems.find((item) => item.id === product.id);
 
             if(exists) {
@@ -27,7 +40,7 @@ export const useCartStorage = create(
             };
         },
 
-        incrementQuantity: (id) => {
+        incrementQuantity: (id: number) => {
         set({
             cartItems: get().cartItems.map((item) =>
             item.id === id
@@ -35,7 +48,7 @@ export const useCartStorage = create(
         });
         },
 
-        decrementQuantity: (id) => {
+        decrementQuantity: (id: number) => {
         set({
             cartItems: get().cartItems.map((item) =>
             item.id === id
@@ -44,15 +57,15 @@ export const useCartStorage = create(
         });
         },
 
-        removeItem: (id) => {
+        removeItem: (id: number) => {
             set({
             cartItems: get().cartItems.filter((item) => item.id !== id),
         });
         },
 
         clearCart: () => {
-            set ({ cartItems: [] });
-        },
+        set({ cartItems: [] });
+      },
     }),
 {
     name: 'cart-storage',

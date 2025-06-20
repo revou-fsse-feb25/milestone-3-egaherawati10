@@ -1,17 +1,20 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
 import ProductCard from "./component/ProductCard";
 import ShopFAQ from "./component/FAQ";
 import LoadingSpinner from "./component/LoadingSpinner";
 import { useEffect, useState } from "react";
 import { NavBar } from "./component/NavBar";
+import { Product } from "../types/product";
 
-export default function HomeClient() {
-  const { data: session, status } = useSession();
-  const [products, setProducts] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+interface HomeClientProps {
+  session: Session;
+}
+export default function HomeClient({ session }: HomeClientProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -22,7 +25,8 @@ export default function HomeClient() {
         setProducts(data);
         setError(null);
       } catch (err) {
-        setError(err.message);
+        const errorMessage = err instanceof Error ? err.message : "An error occurred";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -35,7 +39,7 @@ export default function HomeClient() {
 
   return (
     <main>
-      <NavBar session={session} />
+      <NavBar session={session as Session} />
       
       <div className="p-4">
         <h1 className="text-2xl font-bold mb-4">Product Catalog</h1>

@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { NavBar } from "../component/NavBar"; 
+import { Session } from "next-auth";
 
 export default function UserProfile() {
   const { data: session, status } = useSession();
@@ -23,7 +24,7 @@ export default function UserProfile() {
 
   return (
     <>
-      <NavBar session={session} />
+      <NavBar session={session as Session} />
 
       <main className="p-8">
         <section>
