@@ -6,15 +6,8 @@ import { useSession } from "next-auth/react";
 import { useCartStorage } from "../stores/CartStorage";
 import LoadingSpinner from "../component/LoadingSpinner";
 import Link from "next/link";
-import { clear } from "console";
-
-interface CartItem {
-  id: number;
-  title: string;
-  price: number;
-  quantity: number;
-  images: string[];
-}
+import { NavBar } from "../component/NavBar";
+import { CartItem } from "../../types/cart";
 
 const CartPage: React.FC = () => {
   const router = useRouter();
@@ -53,6 +46,9 @@ const CartPage: React.FC = () => {
   );
 
   return (
+  <>
+      <NavBar session={session} />
+
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-3xl font-semibold mb-6">Shopping Cart</h1>
 
@@ -125,6 +121,7 @@ const CartPage: React.FC = () => {
         </>
       )}
     </div>
+  </>
   );
 };
 

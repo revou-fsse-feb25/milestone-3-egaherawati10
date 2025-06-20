@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import CartIcon from "./CartIcon";
 import { Session } from "next-auth";
-import React, { ReactNode } from "react"
+import React, { ReactNode } from "react";
 
 interface NavBarProps {
   session: Session | null;
@@ -16,23 +16,25 @@ interface NavLinkProps {
   children: ReactNode;
 }
 
-export function NavBar({ session }: NavBarProps) {
+function NavLink({ href, children }: NavLinkProps) {
   const pathname = usePathname();
-  const isAdmin = session?.user?.role === "admin";
+  const isActive = pathname === href;
 
-  function NavLink({ href, children }: NavLinkProps) {
-    const isActive = pathname === href;
-    return (
-      <Link
-        href={href}
-        className={`text-white hover:text-gray-400 transition-colors ${
-          isActive ? "text-gray-400" : ""
-        }`}
-      >
-        {children}
-      </Link>
-    );
-  }
+  return (
+    <Link
+      href={href}
+      className={`text-white hover:text-gray-400 transition-colors ${
+        isActive ? "text-gray-400" : ""
+      }`}
+    >
+      {children}
+    </Link>
+  );
+}
+
+export function NavBar({ session }: NavBarProps) {
+  const isAdmin = session?.user?.role === "admin";
+  const displayName = session?.user?.name?.split(" ")[0] || "Profile";
 
   return (
     <nav className="bg-gray-900 border-b border-gray-700 sticky top-0 z-50">
@@ -47,18 +49,18 @@ export function NavBar({ session }: NavBarProps) {
           <NavLink href="/">Home</NavLink>
 
           {isAdmin ? (
-            <>
-              <NavLink href={"/dashboard/products"}>Products</NavLink>
-            </>
+            <NavLink href="/dashboard/products">Products</NavLink>
           ) : (
             <>
               <NavLink href="/">FAQ</NavLink>
-              <NavLink href="/cart"><CartIcon /></NavLink>
+              <NavLink href="/cart">
+                <CartIcon />
+              </NavLink>
             </>
           )}
-          
+
           <NavLink href={isAdmin ? "/dashboard" : "/profile"}>
-            {session?.user?.name?.split(" ")[0] || "Profile"}
+            {displayName}
           </NavLink>
 
           <button
@@ -67,7 +69,6 @@ export function NavBar({ session }: NavBarProps) {
           >
             Logout
           </button>
-
         </div>
       </div>
     </nav>

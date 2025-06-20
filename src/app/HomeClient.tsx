@@ -1,16 +1,17 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import { Session } from "next-auth";
 import ProductCard from "./component/ProductCard";
 import ShopFAQ from "./component/FAQ";
 import LoadingSpinner from "./component/LoadingSpinner";
-import { useEffect, useState } from "react";
 import { NavBar } from "./component/NavBar";
 import { Product } from "../types/product";
 
 interface HomeClientProps {
   session: Session;
 }
+
 export default function HomeClient({ session }: HomeClientProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -31,26 +32,32 @@ export default function HomeClient({ session }: HomeClientProps) {
         setLoading(false);
       }
     };
+
     fetchProducts();
   }, []);
 
-  if (status === "loading" || loading) return <div className="p-4 text-lg"><LoadingSpinner /></div>;
-  if (error) return <div className="p-4 text-red-500">{error}</div>;
+  if (loading) {
+    return <div className="p-4 text-lg"><LoadingSpinner /></div>;
+  }
+
+  if (error) {
+    return <div className="p-4 text-red-500">{error}</div>;
+  }
 
   return (
     <main>
-      <NavBar session={session as Session} />
-      
+      <NavBar session={session} />
+
       <div className="p-4">
         <h1 className="text-2xl font-bold mb-4">Product Catalog</h1>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            isAdmin={session?.user?.role === "admin"}
-          />
-        ))}
+            <ProductCard
+              key={product.id}
+              product={product}
+              isAdmin={session?.user?.role === "admin"}
+            />
+          ))}
         </div>
       </div>
 

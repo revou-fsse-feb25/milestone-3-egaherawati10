@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'; // <-- Correct import!
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCartStorage } from "../stores/CartStorage";
 import { CartItem } from "../../types/cart";
